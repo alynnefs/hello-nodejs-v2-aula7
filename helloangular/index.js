@@ -35,10 +35,12 @@ app.get("/participante/:idparticipante/eventos", (req,res) => {
 
 app.post("/evento", (req,res) => {
   var novo = req.body;
+  console.log(novo);
   knex("evento").insert(novo,"idevento").then((ret) => {
     novo.idevento=ret[0];
     res.send(novo);
   }).catch((err) => {
+    console.log(err);
     res.status(500).send(err);
   });
 });

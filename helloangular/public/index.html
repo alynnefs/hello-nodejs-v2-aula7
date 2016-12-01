@@ -1,27 +1,49 @@
 <!DOCTYPE html>
 <!-- index.html -->
 <html ng-app="anguhello">
-<head>
-  <title>Hello Angular!</title>
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
-</head>
-<body ng-controller="exemplo1 as ctl">
-<!-- vamos colocar a variável nome no escopo do controller -->
-<h1>Olar {{ctl.nome}}!</h1>
-<input ng-model="ctl.nome"/><br/>
-<button ng-click="ctl.invert()">Inverter nome</button>
-<script type="text/javascript">
-  // um módulo
-  angular.module("anguhello",[]);
+  <head>
+    <title>Hello Angular!</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+  </head>
+  <body ng-controller="exemplo1 as ctl">
+    <h1>Eventos</h1>
+    <form ng-submit="ctl.salvaevento()">
+      <fieldset>
+        <legend>Novo evento</legend>
+        <label>Data</label>
+        <input type="date" ng-model="ctl.novo.data" required/>
+        <br/>
+        <label>Descrição do evento</label>
+        <input ng-model="ctl.novo.nome" required/>
+        <br/>
+        <input type="submit"/>
+      </fieldset>
+    </form>
+    <ul>
+      <li ng-repeat=" ev in ctl.data">{{ev.data | date: "yyyy-MM-dd"}} {{ev.dscevento}}</li>
+    </ul>
+    <script type="text/javascript">
+      angular.module("anguhello",[]);
+      //
+      angular.module("anguhello").controller("exemplo1", function($http){
 
-  // um controller
-  angular.module("anguhello").controller("exemplo1", function(){
+        this.novo = {};
 
-    this.invert = () => {
-      if(this.nome)
-        this.nome = this.nome.split("").reverse().join("");
-    };
-  });
-</script>
-</body>
+        this.listar = () => $http.get("eventos").then( (ret) => {
+          this.eventos = ret.data;
+        });
+
+        // carregar a lista imediatamente após carregar o controlador
+        this.listar();
+
+        this.salvaevento = () => {
+          $http.post("evento",this.novo).then( (ret) => {
+            alert("evento salvo com id "+ret.data.idevento);
+            this.listar();
+            this.novo = {};
+          });
+        };
+      });
+    </script>
+  </body>
 </html>
